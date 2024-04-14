@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 import server.Server;
 
-public class Cilent {
+public class Client {
     public static void main(String[] args) {
         if (args.length != 2) {
             System.out.println("Arguments required: <multicast-host> <port-number>");
@@ -52,12 +52,16 @@ public class Cilent {
                     break;
                 }
 
-                output.println(String.format("\"%s\": %s", clientName, message));
+                output.println(String.format("Message : %s", message));
+
                 
             }
 
+            scanner.close();
+
         } catch (IOException e) {
             e.printStackTrace();
+
         }
 
     }

@@ -1,14 +1,14 @@
 package server;
-import java.net.*;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.ArrayList;
 
 public class ServerThread extends Thread {
     private Socket socket;
     private ArrayList<ServerThread> serverThreadPool;
     private PrintWriter output;
-
-    
 
     public ServerThread(Socket socket, ArrayList<ServerThread> serverThreads) {
         this.socket = socket;
@@ -25,7 +25,10 @@ public class ServerThread extends Thread {
 
             // Continuously listens for client input
             while (true) {
-                String outputString = input.readLine().strip().toLowerCase();
+                String outputString = input.readLine();
+                if (outputString != null)
+                    outputString = outputString.strip().toLowerCase();
+
                 if (outputString.equals(Server.EXIT_STRING)) {
                     break;
                 }
