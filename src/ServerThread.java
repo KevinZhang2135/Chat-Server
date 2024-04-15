@@ -24,12 +24,13 @@ public class ServerThread extends Thread {
             // Continuously listens for client input
             while (true) {
                 String outputString = input.readLine();
-                if (outputString != null)
+                if (outputString != null) {
                     outputString = outputString.strip().toLowerCase();
 
-                if (outputString.equals(Server.EXIT_STRING)) 
-                    break;
-            
+                    if (outputString.equals(Server.EXIT_STRING))
+                        break;
+                }
+
                 printToClients(outputString, socket);
             }
 
@@ -43,7 +44,17 @@ public class ServerThread extends Thread {
      * @param outputString
      */
     private void printToClients(String outputString, Socket socket) {
-        for (ServerThread thread : serverThreadPool) {
+        for (int i = 0; i < serverThreadPool.size(); i++) {
+            ServerThread thread = serverThreadPool.get(i);
+
+            // Prunes closed sockets
+            if (thread.output == null) {
+                serverThreadPool.remove(i);
+                i--;
+
+                continue;
+            }
+
             // If the address is not the sender
             if (!thread.socket.equals(socket))
                 thread.output.println(outputString);

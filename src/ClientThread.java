@@ -14,13 +14,12 @@ public class ClientThread extends Thread{
     public void run() {
         // Reads group chat from server
         try (BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()))){
-            while (true) {
+            while (!socket.isClosed()) {
                 String response = input.readLine();
                 if (response != null) {
                     System.out.println("\r" + response);
                     System.out.print("You: ");
                 }
-                    
             }
          
         } catch (Exception e) {

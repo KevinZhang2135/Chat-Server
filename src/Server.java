@@ -29,6 +29,7 @@ public class Server {
                 serverThread.start();
                 
                 System.out.println("Number of clients: " + serverThreadPool.size());
+                System.out.println(serverThreadPool);
             }
 
         } catch (Exception e) {
