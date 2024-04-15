@@ -1,5 +1,3 @@
-package server;
-
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -21,12 +19,16 @@ public class Server {
         ArrayList<ServerThread> serverThreadPool = new ArrayList<>();
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Server running on " + InetAddress.getLocalHost());
+
+            // Continuously listens for new socket connections
             while (true) {
-                Socket socket = serverSocket.accept();
+                Socket socket = serverSocket.accept(); // blocks until new connection is made
                 ServerThread serverThread = new ServerThread(socket, serverThreadPool);
 
                 serverThreadPool.add(serverThread);
                 serverThread.start();
+                
+                System.out.println("Number of clients: " + serverThreadPool.size());
             }
 
         } catch (Exception e) {

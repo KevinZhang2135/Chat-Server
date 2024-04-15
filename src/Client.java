@@ -1,13 +1,10 @@
-package client;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.Scanner;
-
-import server.Server;
 
 public class Client {
     public static void main(String[] args) {
@@ -31,38 +28,42 @@ public class Client {
         try (Socket socket = new Socket(hostAddress, port)) {
             // Reads text input from local machine
             Scanner scanner = new Scanner(System.in);
-            PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
-
-            ClientThread clientThread = new ClientThread(socket);
-            clientThread.start();
 
             // Gets username
             System.out.print("Enter name: ");
-            String clientName = scanner.nextLine();
+            String username = scanner.nextLine();
+            
+            // Sets up thread
+            PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
+            ClientThread clientThread = new ClientThread(socket);
+            clientThread.start();
 
             // Listens for user input
             String message;
             while (true) {
-                System.out.print(String.format("\"%s\": ", clientName));
+                System.out.print("You: ");
                 message = scanner.nextLine();
                 
                 // User leaves server
                 if (message.equals(Server.EXIT_STRING)) {
-                    output.println(String.format("\"%s\" has left.", clientName));
+                    output.println(username + " has left.");
                     break;
                 }
 
-                output.println(String.format("Message : %s", message));
-
-                
+                output.println(String.format("%s (%s): %s ", username, new Date().toString(), message));
             }
 
             scanner.close();
 
         } catch (IOException e) {
             e.printStackTrace();
-
         }
 
+    }
+
+    public static void backspace(int times) {
+        for (int i = 0; i < times; i++) {
+            System.out.print("\b \b");
+        }
     }
 }

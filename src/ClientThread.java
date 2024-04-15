@@ -1,5 +1,3 @@
-package client;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,8 +16,11 @@ public class ClientThread extends Thread{
         try (BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()))){
             while (true) {
                 String response = input.readLine();
-                if (response != null)
-                    System.out.println(response);
+                if (response != null) {
+                    System.out.println("\r" + response);
+                    System.out.print("You: ");
+                }
+                    
             }
          
         } catch (Exception e) {
