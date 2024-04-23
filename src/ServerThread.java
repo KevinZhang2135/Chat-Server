@@ -24,15 +24,17 @@ public class ServerThread extends Thread {
             // Continuously listens for client input
             while (true) {
                 String outputString = input.readLine();
+
+                // When the user enters the exit string
+                // Removes thread from server pool and terminates
                 if (outputString == null) {
                     serverThreadPool.remove(this);
                     break;
                 }
 
-                if (outputString != null) {
-                    outputString = outputString.strip().toLowerCase();
-                    printToClients(outputString, socket);
-                }
+                outputString = outputString.strip().toLowerCase();
+                printToClients(outputString, socket);
+                
             }
 
         } catch (Exception e) {
