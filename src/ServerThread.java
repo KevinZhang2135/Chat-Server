@@ -24,14 +24,15 @@ public class ServerThread extends Thread {
             // Continuously listens for client input
             while (true) {
                 String outputString = input.readLine();
-                if (outputString != null) {
-                    outputString = outputString.strip().toLowerCase();
-
-                    if (outputString.equals(Server.EXIT_STRING))
-                        break;
+                if (outputString == null) {
+                    serverThreadPool.remove(this);
+                    break;
                 }
 
-                printToClients(outputString, socket);
+                if (outputString != null) {
+                    outputString = outputString.strip().toLowerCase();
+                    printToClients(outputString, socket);
+                }
             }
 
         } catch (Exception e) {
@@ -47,17 +48,21 @@ public class ServerThread extends Thread {
         for (int i = 0; i < serverThreadPool.size(); i++) {
             ServerThread thread = serverThreadPool.get(i);
 
-            // Prunes closed sockets
-            if (thread.output == null) {
-                serverThreadPool.remove(i);
-                i--;
-
-                continue;
-            }
-
             // If the address is not the sender
             if (!thread.socket.equals(socket))
                 thread.output.println(outputString);
         }
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public ArrayList<ServerThread> getServerThreadPool() {
+        return serverThreadPool;
+    }
+
+    public PrintWriter getOutput() {
+        return output;
     }
 }

@@ -32,7 +32,7 @@ public class Client {
             // Gets username
             System.out.print("Enter name: ");
             String username = scanner.nextLine();
-            
+
             // Sets up thread
             PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
             ClientThread clientThread = new ClientThread(socket);
@@ -43,17 +43,18 @@ public class Client {
             while (true) {
                 System.out.print("You: ");
                 message = scanner.nextLine();
-                
-                // User leaves server
-                if (message.equals(Server.EXIT_STRING)) {
-                    output.println(username + " has left.");
-                    break;
-                }
 
+                // User leaves server
+                if (message.equals(Server.EXIT_STRING)) 
+                    break;
+                
                 output.println(String.format("%s (%s): %s ", username, new Date().toString(), message));
             }
 
             scanner.close();
+            
+            // Displays leave message to other users
+            output.println(username + " has left.");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -61,8 +62,7 @@ public class Client {
     }
 
     public static void backspace(int times) {
-        for (int i = 0; i < times; i++) {
+        for (int i = 0; i < times; i++) 
             System.out.print("\b \b");
-        }
     }
 }
