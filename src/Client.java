@@ -46,10 +46,10 @@ public class Client {
                 }
 
             } catch (SocketException e) {
-                System.out.println("Exited string entered");
+                System.out.println("Exited string entered.");
 
             } catch (Exception e) {
-                System.out.println("Safely caught in thread");
+                System.out.println("Exception caught in client thread.");
                 e.printStackTrace();
             }
         }
@@ -123,7 +123,7 @@ public class Client {
         }
 
         catch (Exception e) {
-            System.out.println("Safely caught in client");
+            System.out.println("Exception caught in client.");
             e.printStackTrace();
 
         } finally {

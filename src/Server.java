@@ -4,10 +4,12 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 public class Server {
     public static final String EXIT_STRING = "exit";
+    public static final int NUM_THREADS = 10;
 
     private int port;
     private ArrayList<ServerThread> serverThreads;
@@ -51,7 +53,13 @@ public class Server {
                     printToClients(outputString, socket);
                 }
 
+            } catch (SocketException e) {
+                // Removes itself if there is a socket exception
+                socket = null;
+                serverThreads.remove(this);
+
             } catch (Exception e) {
+                System.out.println("Exception caught in server thread.");
                 e.printStackTrace();
             }
         }
@@ -63,7 +71,8 @@ public class Server {
          */
         private void printToClients(String outputString, Socket socket) {
             for (ServerThread thread : serverThreads)
-                thread.output.println(outputString);
+                if (thread != this) 
+                    thread.output.println(outputString);
         }
     }
 
@@ -99,6 +108,7 @@ public class Server {
             }
 
         } catch (Exception e) {
+            System.out.println("Exception caught in server.");
             e.printStackTrace();
         }
     }
