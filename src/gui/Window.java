@@ -1,19 +1,13 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridBagLayout;
-import java.awt.Point;
-import java.awt.geom.RoundRectangle2D;
 import java.net.InetAddress;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import gui.TextBox.Align;
 
 public class Window extends JFrame {
     public static final Dimension SIZE = new Dimension(600, 1000);
-    public static final double GUTTER_WIDTH = 50.0; // Left and right margin of the screen
+    public static final int GUTTER_WIDTH = 50; // Left and right margin of the screen
 
     private final String username;
     private final InetAddress hostAddress;
@@ -55,7 +49,7 @@ public class Window extends JFrame {
 
         String shortMessage = "Lorem ipsum dolor sit amet";
         
-        add(new TextBox("Sender", longMessage, Align.RIGHT));
+        add(new TextBox(username, "Sender", longMessage));
 
         // Displays window in the center of the screen
         pack();
