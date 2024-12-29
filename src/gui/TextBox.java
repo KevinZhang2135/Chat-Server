@@ -2,11 +2,13 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
+import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.RoundRectangle2D;
 import java.text.AttributedString;
@@ -14,8 +16,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class TextBox extends JPanel {
+    private static final Dimension SCREEN_MARGIN = new Dimension(50, 0); // Margins of the screen
+    private static final Dimension BOX_MARGIN = new Dimension(20, 10); // Margins of text box
+
     // Maximum width of the text box
-    private static final int MAX_WIDTH = Window.SIZE.width - Window.GUTTER_WIDTH * 2;
+    private static final int MAX_WIDTH = Window.SIZE.width - SCREEN_MARGIN.width * 2;
+
+    // Maximum width of the text
+    private static final int MAX_TEXT_WIDTH = MAX_WIDTH - BOX_MARGIN.width * 2;
+
+    // Radius of the rounded text box corners
     private static final int BORDER_RADIUS = (int) (MAX_WIDTH * 0.02);
 
     // Colors
@@ -34,12 +44,12 @@ public class TextBox extends JPanel {
         }
     };
 
-    private RoundRectangle2D box;
+    private static int count = 0;
 
     private String username, sender;
 
-    private String message;
-    private AttributedString attributedMessage;
+    private JLabel text;
+    private RoundRectangle2D box;
 
     /**
      * Initializes and displays a text box as a rounded rectangle with a message and name of the
@@ -52,53 +62,30 @@ public class TextBox extends JPanel {
     public TextBox(String username, String sender, String message) {
         this.username = username;
         this.sender = sender;
-        this.message = message;
-        attributedMessage = new AttributedString(message);
 
-        System.out.println(getPreferredSize());
+        // Formats message as sans-serif in 16-pt font
+        // HTML tags are used to enforce text wrapping
+        add(text = new JLabel(
+                String.format("<html><p WIDTH=%s>%s</p></html>", MAX_TEXT_WIDTH, message)));
+
+        text.setForeground(TEXT_COLOR);
+        text.setFont(new Font("SansSerif", Font.PLAIN, 16));
 
         // When the width of the box exceeds the maximum, it expands vertically
-        Dimension boxSize = new Dimension(message.length() * 10, 100);
-        if (boxSize.width > MAX_WIDTH) {
-            boxSize.height *= (int) (boxSize.width / MAX_WIDTH) + 1;
-            boxSize.width = (int) MAX_WIDTH;
-        }
+        Dimension boxSize =
+                new Dimension(MAX_WIDTH, text.getPreferredSize().height + 2 * BOX_MARGIN.height);
 
         // Aligns the box to the right of the screen if the sender is the user
-        Point boxPos = new Point((int) Window.GUTTER_WIDTH, 50);
+        Point boxPos = new Point(SCREEN_MARGIN.width, 50);
         if (sender.equals(username))
-            boxPos.x = Window.SIZE.width - Window.GUTTER_WIDTH - boxSize.width;
+            boxPos.x = Window.SIZE.width - SCREEN_MARGIN.width - boxSize.width;
 
         box = new RoundRectangle2D.Double(boxPos.x, 0, boxSize.width, boxSize.height, BORDER_RADIUS,
                 BORDER_RADIUS);
 
+        System.out.println(this);
+        System.out.println(count++);
     }
-
-    /**
-     * Renders text in a wrapping, block paragraph. 
-     * 
-     * @param g2 The graphics drawer used to render text on its parent
-     */
-    public void paintText(Graphics2D g2) {
-        FontRenderContext frc = g2.getFontRenderContext();
-        
-        // Allows text to wrap into paragraphs
-        Point textPos = new Point();
-        LineBreakMeasurer measurer = new LineBreakMeasurer(attributedMessage.getIterator(), frc);
-        float wrappingWidth = getSize().width - 15;
-
-        while (measurer.getPosition() < message.length()) {
-
-            TextLayout layout = measurer.nextLayout(wrappingWidth);
-
-            textPos.y += (layout.getAscent());
-            float dx = layout.isLeftToRight() ? 0 : (wrappingWidth - layout.getAdvance());
-
-            layout.draw(g2, textPos.x + dx, textPos.y);
-            textPos.y += layout.getDescent() + layout.getLeading();
-        }
-    }
-
 
     /**
      * Draws the box and its associated text onto its parent component
@@ -113,9 +100,6 @@ public class TextBox extends JPanel {
         g2.setColor(BOX_COLOR);
         g2.fill(box);
 
-        // Draws text message
-        g2.setColor(TEXT_COLOR);
-        paintText(g2);
     }
 }
 

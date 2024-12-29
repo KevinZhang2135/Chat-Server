@@ -6,8 +6,7 @@ import java.net.InetAddress;
 import javax.swing.JFrame;
 
 public class Window extends JFrame {
-    public static final Dimension SIZE = new Dimension(600, 1000);
-    public static final int GUTTER_WIDTH = 50; // Left and right margin of the screen
+    public static final Dimension SIZE = new Dimension(360, 800);
 
     private final String username;
     private final InetAddress hostAddress;
@@ -49,7 +48,8 @@ public class Window extends JFrame {
 
         String shortMessage = "Lorem ipsum dolor sit amet";
         
-        add(new TextBox(username, "Sender", longMessage));
+        add(new TextBox(username, "2", longMessage));
+        add(new TextBox(username, "Sender", shortMessage));
 
         // Displays window in the center of the screen
         pack();
