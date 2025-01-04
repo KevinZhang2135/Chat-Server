@@ -1,29 +1,56 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.geom.RoundRectangle2D;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 public class Inbox extends JPanel {
+    public static final Dimension BOX_MARGIN = new Dimension(0, 10);
+    public static final Dimension TEXT_BOX_MARGIN = new Dimension(20, 10);
+
+    // Maximum width of the text box
+    public static final int TEXT_BOX_WIDTH = Window.SIZE.width - Window.SCREEN_MARGIN.width * 2;
+
+    // Maximum width of the text label
+    public static final int TEXT_WIDTH = TEXT_BOX_WIDTH - TEXT_BOX_MARGIN.width * 2;
+
+    // Radius of the rounded text box corners
+    public static final int BORDER_RADIUS = (int) (TEXT_BOX_WIDTH * 0.08);
+
+
     private String username;
 
     /**
-     * 
+     * A text box in the inbox displayed for each message that contains message and the name of its
+     * sender.
      */
-    public class TextBox extends JPanel {
-        private String sender;
-        private JLabel text;
+    public static class TextBox extends JPanel {
+        public static final Color BOX_COLOR = new Color(0x282a2d);
+
+        // Colors used for the name of message senders
+        public static enum SenderColors {
+            PINK(0xf791b8), ORANGE(0xfeb580), SAND(0xd6cb75), LIME(0xc9d87b), TEAL(
+                    0x75c4bb), INDIGO(0x8ea4e2), PERIWINKLE(0xaea1f3);
+
+            public final Color color;
+
+            private SenderColors(int hex) {
+                color = new Color(hex);
+            }
+        };
+
         private RoundRectangle2D box;
 
         /**
-         * Initializes and displays a text box as a rounded rectangle with a message and name of the
+         * Initializes and displays a text box as a rounded rectangle with a message and name of its
          * sender. If the sender is the user, it is aligned on the right of the screen.
          * 
          * @param username The name of the user
@@ -31,24 +58,26 @@ public class Inbox extends JPanel {
          * @param message The message content
          */
         public TextBox(String sender, String message) {
-            this.sender = sender;
-
-            // Formats message as sans-serif in 16-pt font HTML tags are used to enforce text
-            // wrapping
-            add(text = new JLabel(
-                    String.format("<html><p WIDTH=%s>%s</p></html>", Window.TEXT_WIDTH, message)));
+            super();
+            
+            String html = "<html><body style='width: %s'>%s</body></html>";
+            JLabel text = new JLabel(String.format(html, TEXT_WIDTH, message));
 
             text.setForeground(Window.TEXT_COLOR);
-            text.setFont(new Font("SansSerif", Font.PLAIN, 16));
+            text.setFont(Window.SANS_SERIF_16);
 
             // When the width of the box exceeds the maximum, it expands vertically
-            Dimension boxSize = new Dimension(Window.TEXT_BOX_WIDTH,
-                    text.getPreferredSize().height + 2 * Window.BOX_MARGIN.height);
+            Dimension boxSize = new Dimension(TEXT_BOX_WIDTH,
+                    text.getPreferredSize().height + 2 * TEXT_BOX_MARGIN.height);
 
-            box = new RoundRectangle2D.Double(0, 0, boxSize.width, boxSize.height,
-                    Window.BORDER_RADIUS, Window.BORDER_RADIUS);
+            box = new RoundRectangle2D.Double(0, 0, boxSize.width, boxSize.height, BORDER_RADIUS,
+                    BORDER_RADIUS);
 
-            // Prevents BoxLayout from resizing
+            setBackground(SenderColors.INDIGO.color);
+            
+            add(text);
+
+            setPreferredSize(boxSize);
             setMaximumSize(boxSize);
         }
 
@@ -59,12 +88,12 @@ public class Inbox extends JPanel {
          */
         @Override
         public void paintComponent(Graphics g) {
+            super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g;
 
             // Draws box
-            g2.setColor(Window.BOX_COLOR);
+            g2.setColor(BOX_COLOR);
             g2.fill(box);
-
         }
     }
 
@@ -74,18 +103,18 @@ public class Inbox extends JPanel {
      * @param username The name of the user
      */
     public Inbox(String username) {
+        super();
         this.username = username;
+
+        // Displays items in a single column
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         // Sets size and inserts padding
         setPreferredSize(Window.SIZE);
         setBorder(new EmptyBorder(Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width,
                 Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width));
 
-        // Displays items in a single column
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
         setBackground(Window.BACKGROUND_COLOR);
-
 
         String longMessage = """
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit,
@@ -100,13 +129,14 @@ public class Inbox extends JPanel {
 
         String shortMessage = "Lorem ipsum dolor sit amet";
 
+        add(new TextBox("Other", shortMessage));
+        add(Box.createRigidArea(BOX_MARGIN));
+        add(new TextBox("Other", longMessage));
 
-        add(new TextBox("Sender1", shortMessage));
-        add(new TextBox("Sender2", longMessage));
-        // add(new TextBox("Sender3", shortMessage));
-        // add(new TextBox("Sender4", shortMessage));
-        // add(new TextBox("Sender5", shortMessage));
-        // add(new TextBox("Sender6", shortMessage));
+        // add(new TextBox("Other2", longMessage));
+        // add(new TextBox("Other2", longMessage));
+        // add(new TextBox("Other2", longMessage));
+        // add(new TextBox("Other2", longMessage));
 
     }
 }
