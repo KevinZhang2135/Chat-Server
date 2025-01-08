@@ -5,11 +5,13 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Label;
 import java.awt.geom.RoundRectangle2D;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 public class Inbox extends JPanel {
@@ -23,47 +25,32 @@ public class Inbox extends JPanel {
     public static final int TEXT_WIDTH = TEXT_BOX_WIDTH - TEXT_BOX_MARGIN.width * 2;
 
     // Radius of the rounded text box corners
-    public static final int BORDER_RADIUS = (int) (TEXT_BOX_WIDTH * 0.08);
-
+    public static final int BORDER_RADIUS = (int) (TEXT_BOX_WIDTH * 0.06);
 
     private String username;
 
     /**
-     * A text box in the inbox displayed for each message that contains message and the name of its
-     * sender.
+     * A text box in the inbox displayed for each message.
      */
-    public static class TextBox extends JPanel {
+    public class TextBox extends JPanel {
         public static final Color BOX_COLOR = new Color(0x282a2d);
-
-        // Colors used for the name of message senders
-        public static enum SenderColors {
-            PINK(0xf791b8), ORANGE(0xfeb580), SAND(0xd6cb75), LIME(0xc9d87b), TEAL(
-                    0x75c4bb), INDIGO(0x8ea4e2), PERIWINKLE(0xaea1f3);
-
-            public final Color color;
-
-            private SenderColors(int hex) {
-                color = new Color(hex);
-            }
-        };
+        public static final Color TEXT_COLOR = new Color(0xe3e2e5);
 
         private RoundRectangle2D box;
 
         /**
-         * Initializes and displays a text box as a rounded rectangle with a message and name of its
-         * sender. If the sender is the user, it is aligned on the right of the screen.
+         * Initializes and displays a text box as a rounded rectangle with a message.
          * 
-         * @param username The name of the user
-         * @param sender The sender of the message
          * @param message The message content
          */
-        public TextBox(String sender, String message) {
+        public TextBox(String message) {
             super();
-            
+
+            // Allows the text to wrap across multiple lines if necessary
             String html = "<html><body style='width: %s'>%s</body></html>";
             JLabel text = new JLabel(String.format(html, TEXT_WIDTH, message));
 
-            text.setForeground(Window.TEXT_COLOR);
+            text.setForeground(TEXT_COLOR);
             text.setFont(Window.SANS_SERIF_16);
 
             // When the width of the box exceeds the maximum, it expands vertically
@@ -73,10 +60,10 @@ public class Inbox extends JPanel {
             box = new RoundRectangle2D.Double(0, 0, boxSize.width, boxSize.height, BORDER_RADIUS,
                     BORDER_RADIUS);
 
-            setBackground(SenderColors.INDIGO.color);
-            
+            setBackground(new Color(0x00000000, true)); // Transparent background
             add(text);
 
+            // Prevents the layout from adding additional margins
             setPreferredSize(boxSize);
             setMaximumSize(boxSize);
         }
@@ -95,6 +82,71 @@ public class Inbox extends JPanel {
             g2.setColor(BOX_COLOR);
             g2.fill(box);
         }
+    }
+
+    public class UserLabel extends JPanel {
+        // Colors used for the name of message senders
+        public static enum SenderColors {
+            PINK(0xf791b8), ORANGE(0xfeb580), SAND(0xd6cb75), LIME(0xc9d87b), TEAL(
+                    0x75c4bb), INDIGO(0x8ea4e2), PERIWINKLE(0xaea1f3);
+
+            public final Color color;
+
+            private SenderColors(int hex) {
+                color = new Color(hex);
+            }
+        };
+
+        /**
+         * Initializes a label for the sender of a message. If the sender is the user, it is aligned
+         * on the right of the screen and the username is replaced with "You".
+         * 
+         * @param sender The specified sender username
+         */
+        public UserLabel(String sender) {
+            // If the sender is the user, the header is replaced with "You" and aligned left
+            int alignment = SwingConstants.LEFT;
+            if (username.equals(sender)) {
+                alignment = SwingConstants.RIGHT;
+                sender = "You";
+            }
+
+            JLabel text = new JLabel(sender, alignment);
+
+            text.setForeground(getSenderColor(sender));
+            text.setFont(Window.SANS_SERIF_16);
+            text.setPreferredSize(new Dimension(TEXT_BOX_WIDTH, text.getPreferredSize().height));
+
+            setBackground(new Color(0x00000000, true)); // Transparent background
+            add(text);
+
+            Dimension size = text.getPreferredSize();
+            size.height *= 1.2;
+
+            // Prevents the layout from adding additional margins
+            setPreferredSize(size);
+            setMaximumSize(size);
+        }
+
+        /**
+         * Returns a color using the hash code of the specified sender to create somewhat random
+         * colors for each user.<br/>
+         * 
+         * Because the color of the sender's username is chosen via hashing, it is approximately
+         * random, and multiple calls using the same sender will return the same color.
+         * 
+         * @param sender The specified username of the sender
+         * @return The color to be used for the username of the sender
+         */
+        private Color getSenderColor(String sender) {
+            SenderColors[] colors = SenderColors.values();
+            int index = sender.hashCode() % colors.length;
+
+            return colors[index].color;
+        }
+
+
+
     }
 
     /**
@@ -116,27 +168,22 @@ public class Inbox extends JPanel {
 
         setBackground(Window.BACKGROUND_COLOR);
 
-        String longMessage = """
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                sed do eiusmod tempor incididunt ut labore et dolore
-                magna aliqua. Ut enim ad minim veniam, quis nostrud
-                exercitation ullamco laboris nisi ut aliquip ex ea
-                commodo consequat. Duis aute irure dolor in
-                reprehenderit in voluptate velit esse cillum dolore eu
-                fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-                non proident, sunt in culpa qui officia deserunt mollit
-                anim id est laborum""";
+    }
 
-        String shortMessage = "Lorem ipsum dolor sit amet";
+    /**
+     * Creates a new inbox message with the specified sender and message and displays it in the
+     * inbox.
+     * 
+     * @param sender The specified username of the sender
+     * @param message The specified message
+     */
+    public void addMessage(String sender, String message) {
+        // Inserts margins between messages
+        if (getComponents().length > 0)
+            add(Box.createRigidArea(BOX_MARGIN));
 
-        add(new TextBox("Other", shortMessage));
-        add(Box.createRigidArea(BOX_MARGIN));
-        add(new TextBox("Other", longMessage));
-
-        // add(new TextBox("Other2", longMessage));
-        // add(new TextBox("Other2", longMessage));
-        // add(new TextBox("Other2", longMessage));
-        // add(new TextBox("Other2", longMessage));
-
+        add(new UserLabel(sender));
+        add(new TextBox(message));
+        revalidate(); // Updates to reveal changes
     }
 }

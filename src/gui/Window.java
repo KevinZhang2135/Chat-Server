@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.net.InetAddress;
 import javax.swing.JFrame;
-import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 /**
  * The main display of the texting application based on Google Messages. It consists of a scrollable
@@ -18,7 +18,6 @@ public class Window extends JFrame {
 
     /* Colors */
     public static final Color BACKGROUND_COLOR = new Color(0x101516);
-    public static final Color TEXT_COLOR = new Color(0xe3e2e5);
 
     private final String username;
     private final InetAddress hostAddress;
@@ -26,6 +25,8 @@ public class Window extends JFrame {
 
     /* Fonts */
     public final static Font SANS_SERIF_16 = new Font("SansSerif", Font.PLAIN, 16);
+
+    private Inbox inbox;
 
     /**
      * Inititals and opens the graphics interface for texting
@@ -36,6 +37,10 @@ public class Window extends JFrame {
      */
     public Window(String username, InetAddress hostAddress, int port) {
         // if (username == null || hostAddress == null)
+        // throw new IllegalArgumentException();
+
+        // Prevents excessively long usernames
+        // if (username.length > 30)
         // throw new IllegalArgumentException();
 
         super();
@@ -50,14 +55,28 @@ public class Window extends JFrame {
         getContentPane().setPreferredSize(SIZE); // Enforces the screen size
         setResizable(false);
 
-        add(new Inbox(username));
+        add(inbox = new Inbox(username));
 
         pack(); // Resizes to set screen size
         setLocationRelativeTo(null); // Displays window in the center of the screen
         setVisible(true);
     }
 
+    /**
+     * Creates a new inbox message with the specified sender and message and displays it in the
+     * inbox.
+     * 
+     * @param sender The specified username of the sender
+     * @param message The specified message
+     */
+    public void addMessage(String sender, String message) {
+        for (int i = 1; i <= 3; i++)
+            inbox.addMessage(sender + i, message);
+        
+    }
+
     public static void main(String[] args) {
-        new Window("User", null, 3000);
+        Window window = new Window("User", null, 3000);
+        SwingUtilities.invokeLater(() -> window.addMessage("sender", "lorem ipsum dolor sit amet"));
     }
 }
