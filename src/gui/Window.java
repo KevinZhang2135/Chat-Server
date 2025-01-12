@@ -1,10 +1,13 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.net.InetAddress;
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 /**
@@ -15,9 +18,11 @@ public class Window extends JFrame {
     /* Dimension and size constants */
     public static final Dimension SIZE = new Dimension(360, 800);
     public static final Dimension SCREEN_MARGIN = new Dimension(20, 10);
+    public static final Dimension INPUT_SIZE = new Dimension(SIZE.width, 100);
 
     /* Colors */
     public static final Color BACKGROUND_COLOR = new Color(0x101516);
+    public static final Color CLEAR = new Color(0x00000000, true);
 
     private final String username;
     private final InetAddress hostAddress;
@@ -27,6 +32,7 @@ public class Window extends JFrame {
     public final static Font SANS_SERIF_16 = new Font("SansSerif", Font.PLAIN, 16);
 
     private Inbox inbox;
+    private Input input;
 
     /**
      * Inititals and opens the graphics interface for texting
@@ -52,10 +58,17 @@ public class Window extends JFrame {
         setTitle(username); // setTitle(username + "@" + hostAddress.toString());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        // Displays items in a single column
+        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
         getContentPane().setPreferredSize(SIZE); // Enforces the screen size
         setResizable(false);
 
+        getContentPane().setBackground(BACKGROUND_COLOR);
+
         add(inbox = new Inbox(username));
+        add(input = new Input(username));
+        
+        // addMessage("sender", "message");
 
         pack(); // Resizes to set screen size
         setLocationRelativeTo(null); // Displays window in the center of the screen
@@ -71,12 +84,11 @@ public class Window extends JFrame {
      */
     public void addMessage(String sender, String message) {
         for (int i = 1; i <= 3; i++)
-            inbox.addMessage(sender + i, message);
-        
+            inbox.addMessage(sender + i, message + i);
     }
 
     public static void main(String[] args) {
         Window window = new Window("User", null, 3000);
-        SwingUtilities.invokeLater(() -> window.addMessage("sender", "lorem ipsum dolor sit amet"));
+        SwingUtilities.invokeLater(() -> window.addMessage("sender", "message"));
     }
 }

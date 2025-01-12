@@ -2,11 +2,10 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Label;
 import java.awt.geom.RoundRectangle2D;
+import java.lang.Math;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -28,61 +27,6 @@ public class Inbox extends JPanel {
     public static final int BORDER_RADIUS = (int) (TEXT_BOX_WIDTH * 0.06);
 
     private String username;
-
-    /**
-     * A text box in the inbox displayed for each message.
-     */
-    public class TextBox extends JPanel {
-        public static final Color BOX_COLOR = new Color(0x282a2d);
-        public static final Color TEXT_COLOR = new Color(0xe3e2e5);
-
-        private RoundRectangle2D box;
-
-        /**
-         * Initializes and displays a text box as a rounded rectangle with a message.
-         * 
-         * @param message The message content
-         */
-        public TextBox(String message) {
-            super();
-
-            // Allows the text to wrap across multiple lines if necessary
-            String html = "<html><body style='width: %s'>%s</body></html>";
-            JLabel text = new JLabel(String.format(html, TEXT_WIDTH, message));
-
-            text.setForeground(TEXT_COLOR);
-            text.setFont(Window.SANS_SERIF_16);
-
-            // When the width of the box exceeds the maximum, it expands vertically
-            Dimension boxSize = new Dimension(TEXT_BOX_WIDTH,
-                    text.getPreferredSize().height + 2 * TEXT_BOX_MARGIN.height);
-
-            box = new RoundRectangle2D.Double(0, 0, boxSize.width, boxSize.height, BORDER_RADIUS,
-                    BORDER_RADIUS);
-
-            setBackground(new Color(0x00000000, true)); // Transparent background
-            add(text);
-
-            // Prevents the layout from adding additional margins
-            setPreferredSize(boxSize);
-            setMaximumSize(boxSize);
-        }
-
-        /**
-         * Draws the box and its associated text onto its parent component
-         * 
-         * @param g The graphics drawer used to render shapes or text on its parent
-         */
-        @Override
-        public void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            Graphics2D g2 = (Graphics2D) g;
-
-            // Draws box
-            g2.setColor(BOX_COLOR);
-            g2.fill(box);
-        }
-    }
 
     public class UserLabel extends JPanel {
         // Colors used for the name of message senders
@@ -117,15 +61,15 @@ public class Inbox extends JPanel {
             text.setFont(Window.SANS_SERIF_16);
             text.setPreferredSize(new Dimension(TEXT_BOX_WIDTH, text.getPreferredSize().height));
 
-            setBackground(new Color(0x00000000, true)); // Transparent background
-            add(text);
-
             Dimension size = text.getPreferredSize();
             size.height *= 1.2;
 
             // Prevents the layout from adding additional margins
             setPreferredSize(size);
             setMaximumSize(size);
+
+            setBackground(Window.CLEAR); // Transparent background
+            add(text);
         }
 
         /**
@@ -140,13 +84,65 @@ public class Inbox extends JPanel {
          */
         private Color getSenderColor(String sender) {
             SenderColors[] colors = SenderColors.values();
-            int index = sender.hashCode() % colors.length;
+            int index = Math.abs(sender.hashCode()) % colors.length;
 
             return colors[index].color;
         }
+    }
 
+    /**
+     * A text box in the inbox displayed for each message.
+     */
+    public class TextBox extends JPanel {
+        public static final Color BOX_COLOR = new Color(0x282a2d);
+        public static final Color TEXT_COLOR = new Color(0xe3e2e5);
 
+        private RoundRectangle2D box;
 
+        /**
+         * Initializes and displays a text box as a rounded rectangle with a message.
+         * 
+         * @param message The message content
+         */
+        public TextBox(String message) {
+            super();
+
+            // Allows the text to wrap across multiple lines if necessary
+            String html = "<html><body style='width: %s'>%s</body></html>";
+            JLabel text = new JLabel(String.format(html, TEXT_WIDTH, message));
+
+            text.setForeground(TEXT_COLOR);
+            text.setFont(Window.SANS_SERIF_16);
+
+            // When the width of the box exceeds the maximum, it expands vertically
+            Dimension boxSize = new Dimension(TEXT_BOX_WIDTH,
+                    text.getPreferredSize().height + 2 * TEXT_BOX_MARGIN.height);
+
+            box = new RoundRectangle2D.Double(0, 0, boxSize.width, boxSize.height, BORDER_RADIUS,
+                    BORDER_RADIUS);
+
+            // Prevents the layout from adding additional margins
+            setMaximumSize(boxSize);
+            setBackground(Window.CLEAR); // Transparent background
+
+            add(text);
+
+        }
+
+        /**
+         * Draws the box and its associated text onto its parent component
+         * 
+         * @param g The graphics drawer used to render shapes or text on its parent
+         */
+        @Override
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2 = (Graphics2D) g;
+
+            // Draws box
+            g2.setColor(BOX_COLOR);
+            g2.fill(box);
+        }
     }
 
     /**
@@ -162,11 +158,12 @@ public class Inbox extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         // Sets size and inserts padding
-        setPreferredSize(Window.SIZE);
         setBorder(new EmptyBorder(Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width,
                 Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width));
 
-        setBackground(Window.BACKGROUND_COLOR);
+        setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        setBackground(Window.CLEAR);
+
 
     }
 
@@ -178,12 +175,14 @@ public class Inbox extends JPanel {
      * @param message The specified message
      */
     public void addMessage(String sender, String message) {
-        // Inserts margins between messages
-        if (getComponents().length > 0)
-            add(Box.createRigidArea(BOX_MARGIN));
-
         add(new UserLabel(sender));
         add(new TextBox(message));
+
+        // Inserts margins between messages
+        add(Box.createRigidArea(BOX_MARGIN));
+
         revalidate(); // Updates to reveal changes
+        repaint(); // Redraw over old image
+        
     }
 }
