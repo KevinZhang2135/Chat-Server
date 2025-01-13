@@ -3,55 +3,61 @@ package gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.Shape;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
-import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 public class Input extends JPanel {
     /* Dimension and size constants */
-    // Maximum width of the box
-    public static final int BOX_WIDTH = Window.SIZE.width - Window.SCREEN_MARGIN.width * 2;
-
-    // Radius of the rounded box corners
-    public static final int BORDER_RADIUS = (int) (BOX_WIDTH * 0.06);
+    // Maximum size of the box
+    public static final Dimension BOX_SIZE =
+            new Dimension(Window.INPUT_SIZE.width - Window.SCREEN_MARGIN.width * 2,
+                    Window.INPUT_SIZE.height - Window.SCREEN_MARGIN.height * 2);
 
     /* Colors */
-    public static final Color BOX_COLOR = new Color(0x282a2d);
+    public static final Color FORM_COLOR = new Color(0x282a2d);
     public static final Color TEXT_COLOR = new Color(0xe3e2e5);
 
     private String username;
-    private RoundRectangle2D box;
+    private RoundTextField textField;
 
     public Input(String username) {
         super();
         this.username = username;
 
-        // When the width of the box exceeds the maximum, it expands vertically
-        Dimension boxSize = new Dimension(BOX_WIDTH, 100);
+        textField = new RoundTextField();
+        textField.setPreferredSize(BOX_SIZE);
+        textField.setBorder(new EmptyBorder(Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width,
+                Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width));
 
-        box = new RoundRectangle2D.Double(0, 0, boxSize.width, boxSize.height, BORDER_RADIUS,
-                BORDER_RADIUS);
+        textField.setFont(Window.SANS_SERIF_16);
+        textField.setCaretColor(TEXT_COLOR);
 
-        // Displays items in a single column
-        // setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        textField.setForeground(TEXT_COLOR);
+        textField.setBackground(FORM_COLOR);
 
         // Sets size and inserts padding
         setBorder(new EmptyBorder(Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width,
                 Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width));
 
-        setBackground(Color.RED);
+        setMaximumSize(Window.INPUT_SIZE);
+        setBackground(Window.BACKGROUND_COLOR);
+
+        add(textField);
     }
 
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
+    /**
+     * Clears all characters in the text field
+     */
+    public void clear() {
+        if (textField == null)
+            return;
 
-        // Draws box
-        g2.setColor(BOX_COLOR);
-        g2.fill(box);
+        textField.setText("");
     }
 }

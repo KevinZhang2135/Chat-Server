@@ -1,13 +1,11 @@
 package gui;
 
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.net.InetAddress;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 /**
@@ -18,7 +16,7 @@ public class Window extends JFrame {
     /* Dimension and size constants */
     public static final Dimension SIZE = new Dimension(360, 800);
     public static final Dimension SCREEN_MARGIN = new Dimension(20, 10);
-    public static final Dimension INPUT_SIZE = new Dimension(SIZE.width, 100);
+    public static final Dimension INPUT_SIZE = new Dimension(SIZE.width, 80);
 
     /* Colors */
     public static final Color BACKGROUND_COLOR = new Color(0x101516);
@@ -67,8 +65,6 @@ public class Window extends JFrame {
 
         add(inbox = new Inbox(username));
         add(input = new Input(username));
-        
-        // addMessage("sender", "message");
 
         pack(); // Resizes to set screen size
         setLocationRelativeTo(null); // Displays window in the center of the screen
@@ -83,6 +79,9 @@ public class Window extends JFrame {
      * @param message The specified message
      */
     public void addMessage(String sender, String message) {
+        if (inbox == null)
+            return;
+
         for (int i = 1; i <= 3; i++)
             inbox.addMessage(sender + i, message + i);
     }
@@ -91,4 +90,5 @@ public class Window extends JFrame {
         Window window = new Window("User", null, 3000);
         SwingUtilities.invokeLater(() -> window.addMessage("sender", "message"));
     }
+
 }

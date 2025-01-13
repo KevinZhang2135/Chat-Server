@@ -28,6 +28,9 @@ public class Inbox extends JPanel {
 
     private String username;
 
+    /**
+     * A username header displayed for the sender of each message.
+     */
     public class UserLabel extends JPanel {
         // Colors used for the name of message senders
         public static enum SenderColors {
@@ -126,7 +129,6 @@ public class Inbox extends JPanel {
             setBackground(Window.CLEAR); // Transparent background
 
             add(text);
-
         }
 
         /**
@@ -161,9 +163,8 @@ public class Inbox extends JPanel {
         setBorder(new EmptyBorder(Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width,
                 Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width));
 
-        setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        setMaximumSize(Window.SIZE);
         setBackground(Window.CLEAR);
-
 
     }
 
@@ -183,6 +184,6 @@ public class Inbox extends JPanel {
 
         revalidate(); // Updates to reveal changes
         repaint(); // Redraw over old image
-        
+
     }
 }
