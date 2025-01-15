@@ -184,6 +184,5 @@ public class Inbox extends JPanel {
 
         revalidate(); // Updates to reveal changes
         repaint(); // Redraw over old image
-
     }
 }
