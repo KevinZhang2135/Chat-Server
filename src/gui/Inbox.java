@@ -59,10 +59,10 @@ public class Inbox extends JPanel {
             }
 
             JLabel text = new JLabel(sender, alignment);
-
-            text.setForeground(getSenderColor(sender));
             text.setFont(Window.SANS_SERIF_16);
+
             text.setPreferredSize(new Dimension(TEXT_BOX_WIDTH, text.getPreferredSize().height));
+            text.setForeground(getSenderColor(sender));
 
             Dimension size = text.getPreferredSize();
             size.height *= 1.2;
@@ -85,7 +85,7 @@ public class Inbox extends JPanel {
          * @param sender The specified username of the sender
          * @return The color to be used for the username of the sender
          */
-        private Color getSenderColor(String sender) {
+        private static Color getSenderColor(String sender) {
             SenderColors[] colors = SenderColors.values();
             int index = Math.abs(sender.hashCode()) % colors.length;
 
@@ -164,8 +164,10 @@ public class Inbox extends JPanel {
                 Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width));
 
         setMaximumSize(Window.SIZE);
-        setBackground(Window.CLEAR);
+        setBackground(Window.BACKGROUND_COLOR);
 
+        // Forces the layout to expand to full width
+        add(Box.createRigidArea(new Dimension(Window.SIZE.width, 0))); 
     }
 
     /**

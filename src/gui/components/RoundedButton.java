@@ -1,4 +1,4 @@
-package gui;
+package gui.components;
 
 import java.awt.AWTEvent;
 import java.awt.AWTEventMulticaster;
@@ -16,7 +16,7 @@ import java.awt.event.MouseEvent;
  * A rounded button for user interaction.
  * 
  */
-class RoundedButton extends Component {
+public class RoundedButton extends Component {
     private ActionListener actionListener; // Post action events to listeners
     private boolean pressed = false; // true if the button is indented.
 

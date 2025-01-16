@@ -61,10 +61,12 @@ public class Window extends JFrame {
         getContentPane().setPreferredSize(SIZE); // Enforces the screen size
         setResizable(false);
 
-        getContentPane().setBackground(BACKGROUND_COLOR);
+        // getContentPane().setBackground(BACKGROUND_COLOR);
 
         add(inbox = new Inbox(username));
-        add(input = new Input(username));
+        add(input = new Input(username, (message) -> {
+            addMessage(message);
+        }));
 
         pack(); // Resizes to set screen size
         setLocationRelativeTo(null); // Displays window in the center of the screen
@@ -75,20 +77,18 @@ public class Window extends JFrame {
      * Creates a new inbox message with the specified sender and message and displays it in the
      * inbox.
      * 
-     * @param sender The specified username of the sender
      * @param message The specified message
      */
-    public void addMessage(String sender, String message) {
+    public void addMessage(String message) {
         if (inbox == null)
             return;
 
-        for (int i = 1; i <= 3; i++)
-            inbox.addMessage(sender + i, message + i);
+        inbox.addMessage(username, message);
     }
 
     public static void main(String[] args) {
         Window window = new Window("User", null, 3000);
-        SwingUtilities.invokeLater(() -> window.addMessage("sender", "message"));
+        // SwingUtilities.invokeLater(() -> window.addMessage("message"));
     }
 
 }

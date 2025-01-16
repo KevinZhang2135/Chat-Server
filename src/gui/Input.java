@@ -7,10 +7,14 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import javax.swing.border.EmptyBorder;
+import gui.components.RoundTextField;
+import gui.components.RoundedButton;
 
 public class Input extends JPanel {
     /* Dimension and size constants */
@@ -29,22 +33,18 @@ public class Input extends JPanel {
     private String username;
     private RoundTextField textField;
 
-    public Input(String username) {
+    private Consumer<String> buttonCallback;
+
+    public Input(String username, Consumer<String> buttonCallback) {
         super();
         this.username = username;
+        this.buttonCallback = buttonCallback;
 
         // Creates button to send messages to other users
         RoundedButton sendButton = new RoundedButton();
 
         sendButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_WIDTH));
         sendButton.setBackground(FORM_COLOR);
-
-        sendButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clear();
-            }
-        });
 
         try {
             BufferedImage icon = ImageIO.read(new File("res/sendIcon.png"));
@@ -53,6 +53,15 @@ public class Input extends JPanel {
         } catch (IOException e) {
             System.err.println(e);
         }
+
+        sendButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String output = clear();
+                if (!output.isBlank())
+                    buttonCallback.accept(output);
+            }
+        });
 
         // Creates the text field for the user to enter messages
         textField = new RoundTextField();
