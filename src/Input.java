@@ -1,4 +1,4 @@
-package gui;
+
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,8 +11,8 @@ import java.util.function.Consumer;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import gui.components.RoundTextField;
-import gui.components.RoundedButton;
+import components.RoundTextField;
+import components.RoundedButton;
 
 public class Input extends JPanel {
     /* Dimension and size constants */

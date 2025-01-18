@@ -1,4 +1,4 @@
-package gui.components;
+package components;
 
 import java.awt.AWTEvent;
 import java.awt.AWTEventMulticaster;

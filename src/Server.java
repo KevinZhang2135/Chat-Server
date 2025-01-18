@@ -7,14 +7,22 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 
+/**
+ * The server listens for and accepts new client connections to the server socket and creates a
+ * server dispatcher for each of them to handle messages.
+ */
 public class Server {
     public static final String EXIT_STRING = "exit";
-    public static final int NUM_THREADS = 10;
+    // public static final int NUM_THREADS = 10; // TODO
 
     private int port;
-    private ArrayList<ServerThread> serverThreads;
+    private ArrayList<ServerDispatcher> serverThreads;
 
-    private class ServerThread extends Thread {
+    /**
+     * The dispatcher handles new messages from clients and forwards them to all clients connected
+     * to the server.
+     */
+    private class ServerDispatcher extends Thread {
         private Socket socket;
         private PrintWriter output;
 
@@ -23,7 +31,7 @@ public class Server {
          * 
          * @param socket The specified socket to listen for
          */
-        public ServerThread(Socket socket) {
+        public ServerDispatcher(Socket socket) {
             this.socket = socket;
         }
 
@@ -70,9 +78,8 @@ public class Server {
          * @param outputString
          */
         private void printToClients(String outputString, Socket socket) {
-            for (ServerThread thread : serverThreads)
-                if (thread != this) 
-                    thread.output.println(outputString);
+            for (ServerDispatcher thread : serverThreads)
+                thread.output.println(outputString);
         }
     }
 
@@ -94,11 +101,10 @@ public class Server {
             InetAddress localHost = InetAddress.getLocalHost();
             System.out.println("Server running on " + localHost);
 
-            // Continuously listens for new socket connections
+            // Continuously listens for new socket connections from new users
             while (true) {
-                // Blocks until new connection is made
-                Socket socket = serverSocket.accept();
-                ServerThread serverThread = new ServerThread(socket);
+                Socket socket = serverSocket.accept(); // Blocks until new connection is made
+                ServerDispatcher serverThread = new ServerDispatcher(socket);
 
                 serverThreads.add(serverThread);
                 serverThread.start();
