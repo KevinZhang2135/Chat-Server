@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.function.Consumer;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
 import javax.swing.border.EmptyBorder;
 import gui.components.RoundTextField;
 import gui.components.RoundedButton;
@@ -22,16 +21,15 @@ public class Input extends JPanel {
             Window.INPUT_SIZE.height - Window.SCREEN_MARGIN.height * 2;
 
     // Maximum size of the box
-    public static final Dimension BOX_SIZE =
-            new Dimension(Window.INPUT_SIZE.width - Window.SCREEN_MARGIN.height, BUTTON_WIDTH);
+    public static final Dimension BOX_SIZE = new Dimension(
+            Window.INPUT_SIZE.width - Window.SCREEN_MARGIN.height - BUTTON_WIDTH, BUTTON_WIDTH);
 
     /* Colors */
     public static final Color FORM_COLOR = new Color(0x282a2d);
     public static final Color TEXT_COLOR = new Color(0xe3e2e5);
 
     private RoundTextField textField;
-
-    private Consumer<String> buttonCallback;
+    private Consumer<String> buttonCallback; // Used to send client requests upon pressing button
 
     public Input(Consumer<String> buttonCallback) {
         this.buttonCallback = buttonCallback;
@@ -66,11 +64,10 @@ public class Input extends JPanel {
         textField.setBorder(new EmptyBorder(Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width,
                 Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width));
 
-        textField.setPreferredSize(new Dimension(BOX_SIZE.width - 100, BOX_SIZE.height));
-
         textField.setFont(Window.SANS_SERIF_16);
         textField.setCaretColor(TEXT_COLOR);
 
+        textField.setPreferredSize(BOX_SIZE);
         textField.setForeground(TEXT_COLOR);
         textField.setBackground(FORM_COLOR);
 

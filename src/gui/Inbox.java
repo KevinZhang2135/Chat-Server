@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.RoundRectangle2D;
-import java.lang.Math;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -57,22 +56,31 @@ public class Inbox extends JPanel {
 
             // If the sender is the user, the header is replaced with "You" and aligned left
             int alignment = SwingConstants.LEFT;
-            // if (username.equals(sender)) {
-            //     alignment = SwingConstants.RIGHT;
-            //     sender = "You";
-            // }
+            if (username.equals(sender)) {
+                alignment = SwingConstants.RIGHT;
+                sender = "You";
+            }
 
             JLabel text = new JLabel(sender, alignment);
             text.setBorder(new EmptyBorder(0, 0, 0, 0));
             text.setFont(Window.SANS_SERIF_16);
-            text.setPreferredSize(new Dimension(TEXT_BOX_WIDTH, text.getPreferredSize().height));
 
+            text.setPreferredSize(new Dimension(TEXT_BOX_WIDTH, text.getPreferredSize().height));
             text.setForeground(getSenderColor(sender));
 
-            setPreferredSize(text.getPreferredSize());
-
-            setBackground(Color.GREEN); // Transparent background
+            setBackground(Window.CLEAR); // Transparent background
             add(text);
+        }
+
+        /**
+         * Returns the preferred size as maximum size for the label to prevent resizing by the box layout.
+         * 
+         * @return The preferred size of the label
+         *
+         */
+        @Override
+        public Dimension getMaximumSize() {
+            return getPreferredSize();
         }
 
         /**
@@ -132,6 +140,19 @@ public class Inbox extends JPanel {
             add(text);
         }
 
+
+        /**
+         * Returns the preferred size as maximum size for the text box to prevent resizing by the
+         * box layout.
+         * 
+         * @return The preferred size of the text box
+         *
+         */
+        @Override
+        public Dimension getMaximumSize() {
+            return getPreferredSize();
+        }
+
         /**
          * Draws the box and its associated text onto its parent component
          * 
@@ -168,9 +189,6 @@ public class Inbox extends JPanel {
                 Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width));
 
         setBackground(Window.BACKGROUND_COLOR);
-
-        // Forces the layout to expand the inbox to full width
-        add(Box.createRigidArea(new Dimension(Window.SIZE.width, 0)));
     }
 
     /**

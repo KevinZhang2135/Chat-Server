@@ -3,12 +3,9 @@ package gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.net.InetAddress;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -64,10 +61,8 @@ public class Window extends JFrame {
 
         // Displays items in a single column
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-        getContentPane().setPreferredSize(SIZE); // Enforces the screen size
         setResizable(false);
 
-        // getContentPane().setBackground(BACKGROUND_COLOR);
         inbox = new Inbox(username);
         scrollingInbox = new JScrollPane(inbox);
         
@@ -108,8 +103,8 @@ public class Window extends JFrame {
     public static void main(String[] args) {
         Window window = new Window("Test Long Username that May be Problem", null, 3000);
         SwingUtilities.invokeLater(() -> {
-            for (int i = 0; i < 30; i++) {
-                window.addMessage("message" + i);
+            for (int i = 1; i <= 12; i++) {
+                // window.addMessage("message" + i);
             }
         });
     }
