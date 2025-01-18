@@ -22,8 +22,6 @@ public class RoundTextField extends JTextField {
      * @param displayBorder Whether if the field has borders
      */
     public RoundTextField() {
-        super();
-
         displayBorder = true;
         setOpaque(false);
 

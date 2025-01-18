@@ -46,32 +46,32 @@ public class Inbox extends JPanel {
 
         /**
          * Initializes a label for the sender of a message. If the sender is the user, it is aligned
-         * on the right of the screen and the username is replaced with "You".
+         * on the right of the screen and the username is replaced with "You". Throws
+         * {@code IllegalArgumentException} if the sender is null.
          * 
          * @param sender The specified sender username
          */
         public UserLabel(String sender) {
+            if (sender == null)
+                throw new IllegalArgumentException();
+
             // If the sender is the user, the header is replaced with "You" and aligned left
             int alignment = SwingConstants.LEFT;
-            if (username.equals(sender)) {
-                alignment = SwingConstants.RIGHT;
-                sender = "You";
-            }
+            // if (username.equals(sender)) {
+            //     alignment = SwingConstants.RIGHT;
+            //     sender = "You";
+            // }
 
             JLabel text = new JLabel(sender, alignment);
+            text.setBorder(new EmptyBorder(0, 0, 0, 0));
             text.setFont(Window.SANS_SERIF_16);
-
             text.setPreferredSize(new Dimension(TEXT_BOX_WIDTH, text.getPreferredSize().height));
+
             text.setForeground(getSenderColor(sender));
 
-            Dimension size = text.getPreferredSize();
-            size.height *= 1.2;
+            setPreferredSize(text.getPreferredSize());
 
-            // Prevents the layout from adding additional margins
-            setPreferredSize(size);
-            setMaximumSize(size);
-
-            setBackground(Window.CLEAR); // Transparent background
+            setBackground(Color.GREEN); // Transparent background
             add(text);
         }
 
@@ -103,12 +103,14 @@ public class Inbox extends JPanel {
         private RoundRectangle2D box;
 
         /**
-         * Initializes and displays a text box as a rounded rectangle with a message.
+         * Initializes and displays a text box as a rounded rectangle with a message. Throws
+         * {@code IllegalArgumentException} if the message is null.
          * 
          * @param message The message content
          */
         public TextBox(String message) {
-            super();
+            if (message == null)
+                throw new IllegalArgumentException();
 
             // Allows the text to wrap across multiple lines if necessary
             String html = "<html><body style='width: %s'>%s</body></html>";
@@ -124,8 +126,7 @@ public class Inbox extends JPanel {
             box = new RoundRectangle2D.Double(0, 0, boxSize.width, boxSize.height, BORDER_RADIUS,
                     BORDER_RADIUS);
 
-            // Prevents the layout from adding additional margins
-            setMaximumSize(boxSize);
+            setPreferredSize(boxSize);
             setBackground(Window.CLEAR); // Transparent background
 
             add(text);
@@ -148,12 +149,15 @@ public class Inbox extends JPanel {
     }
 
     /**
-     * Initializes an inbox containing all the text messages in the group chat
+     * Initializes an inbox containing all the text messages in the group chat. Throws
+     * {@code IllegalArgumentException} if the username is null.
      * 
      * @param username The name of the user
      */
     public Inbox(String username) {
-        super();
+        if (username == null)
+            throw new IllegalArgumentException();
+
         this.username = username;
 
         // Displays items in a single column
@@ -163,21 +167,23 @@ public class Inbox extends JPanel {
         setBorder(new EmptyBorder(Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width,
                 Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width));
 
-        setMaximumSize(Window.SIZE);
         setBackground(Window.BACKGROUND_COLOR);
 
-        // Forces the layout to expand to full width
-        add(Box.createRigidArea(new Dimension(Window.SIZE.width, 0))); 
+        // Forces the layout to expand the inbox to full width
+        add(Box.createRigidArea(new Dimension(Window.SIZE.width, 0)));
     }
 
     /**
      * Creates a new inbox message with the specified sender and message and displays it in the
-     * inbox.
+     * inbox. Throws {@code IllegalArgumentException} either if the sender or message is null.
      * 
      * @param sender The specified username of the sender
      * @param message The specified message
      */
     public void addMessage(String sender, String message) {
+        if (sender == null || message == null)
+            throw new IllegalArgumentException();
+
         add(new UserLabel(sender));
         add(new TextBox(message));
 

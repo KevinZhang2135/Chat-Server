@@ -3,10 +3,16 @@ package gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.net.InetAddress;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 
 /**
  * The main display of the texting application based on Google Messages. It consists of a scrollable
@@ -30,6 +36,8 @@ public class Window extends JFrame {
     public final static Font SANS_SERIF_16 = new Font("SansSerif", Font.PLAIN, 16);
 
     private Inbox inbox;
+    private JScrollPane scrollingInbox;
+
     private Input input;
 
     /**
@@ -47,8 +55,6 @@ public class Window extends JFrame {
         // if (username.length > 30)
         // throw new IllegalArgumentException();
 
-        super();
-
         this.username = username;
         this.hostAddress = hostAddress;
         this.port = port;
@@ -62,11 +68,24 @@ public class Window extends JFrame {
         setResizable(false);
 
         // getContentPane().setBackground(BACKGROUND_COLOR);
+        inbox = new Inbox(username);
+        scrollingInbox = new JScrollPane(inbox);
+        
+        // Scroll
+        JScrollBar verticalScroll = scrollingInbox.getVerticalScrollBar();
+        verticalScroll.setPreferredSize(new Dimension(0, 0));
+        verticalScroll.setUnitIncrement(16);
 
-        add(inbox = new Inbox(username));
-        add(input = new Input(username, (message) -> {
-            addMessage(message);
-        }));
+        scrollingInbox.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        // Border, margin, and background
+        scrollingInbox.setBorder(new EmptyBorder(0, 0, 0, 0));
+
+        scrollingInbox.setPreferredSize(SIZE);
+        scrollingInbox.setBackground(Color.GREEN);
+
+        add(scrollingInbox);
+        add(input = new Input((message) -> addMessage(message)));
 
         pack(); // Resizes to set screen size
         setLocationRelativeTo(null); // Displays window in the center of the screen
@@ -87,8 +106,12 @@ public class Window extends JFrame {
     }
 
     public static void main(String[] args) {
-        Window window = new Window("User", null, 3000);
-        // SwingUtilities.invokeLater(() -> window.addMessage("message"));
+        Window window = new Window("Test Long Username that May be Problem", null, 3000);
+        SwingUtilities.invokeLater(() -> {
+            for (int i = 0; i < 30; i++) {
+                window.addMessage("message" + i);
+            }
+        });
     }
 
 }

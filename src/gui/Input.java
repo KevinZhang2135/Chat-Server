@@ -8,7 +8,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
@@ -30,14 +29,11 @@ public class Input extends JPanel {
     public static final Color FORM_COLOR = new Color(0x282a2d);
     public static final Color TEXT_COLOR = new Color(0xe3e2e5);
 
-    private String username;
     private RoundTextField textField;
 
     private Consumer<String> buttonCallback;
 
-    public Input(String username, Consumer<String> buttonCallback) {
-        super();
-        this.username = username;
+    public Input(Consumer<String> buttonCallback) {
         this.buttonCallback = buttonCallback;
 
         // Creates button to send messages to other users
@@ -82,7 +78,6 @@ public class Input extends JPanel {
         setBorder(new EmptyBorder(Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width,
                 Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width));
 
-        setMaximumSize(Window.INPUT_SIZE);
         setBackground(Window.BACKGROUND_COLOR);
 
         add(textField);
