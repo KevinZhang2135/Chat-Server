@@ -31,8 +31,7 @@ public class Input extends JPanel {
     private RoundTextField textField;
     private Consumer<String> buttonCallback; // Used to send client requests upon pressing button
 
-    public Input(Consumer<String> buttonCallback) {
-        this.buttonCallback = buttonCallback;
+    public Input() {
 
         // Creates button to send messages to other users
         RoundedButton sendButton = new RoundedButton();
@@ -52,7 +51,7 @@ public class Input extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String output = clear();
-                if (!output.isBlank())
+                if (!output.isBlank() && buttonCallback != null)
                     buttonCallback.accept(output);
             }
         });
@@ -79,6 +78,15 @@ public class Input extends JPanel {
 
         add(textField);
         add(sendButton);
+    }
+
+    /**
+     * Sets the behavior of the send button upon click.
+     * 
+     * @param buttonCallback The callback triggered by clicking the send button
+     */
+    public void setButtonCallback(Consumer<String> buttonCallback) {
+        this.buttonCallback = buttonCallback;
     }
 
     /**

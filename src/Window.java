@@ -11,12 +11,10 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Date;
-import java.util.Scanner;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 /**
@@ -40,8 +38,6 @@ public class Window extends JFrame {
     private Input input;
 
     private String username;
-    private InetAddress hostAddress;
-    private int port;
 
     private class ClientThread extends Thread {
         private final Socket socket;
@@ -64,15 +60,13 @@ public class Window extends JFrame {
         @Override
         public void run() {
             // Reads group chat from server
-            try (BufferedReader serverInput =
+            try (BufferedReader serverDispatcher =
                     new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
                 while (isRunning) {
-                    String response = serverInput.readLine();
-                    if (isRunning && response != null) {
-                        System.out.println("\r" + response);
-                        System.out.print("You: ");
-                    }
+                    String message = serverDispatcher.readLine(); // Displays message from server
+                    if (message != null)
+                        addMessage(username, message);
                 }
 
             } catch (SocketException e) {
@@ -83,33 +77,20 @@ public class Window extends JFrame {
                 e.printStackTrace();
             }
         }
-
-        /**
-         * Terminates the thread and ceases to receive messages from the server
-         */
-        public void kill() {
-            isRunning = false;
-        }
     }
 
     /**
-     * Initializes and opens the graphics interface for texting.
+     * Initializes and opens the graphics interface for texting. Does not allow usernames beyond 40
+     * characters.
      * 
      * @param username The specified username of the client
-     * @param hostAddress The host address of the server
-     * @param port The port used by the server
      */
-    public Window(String username, InetAddress hostAddress, int port) {
-        // if (username == null || hostAddress == null)
-        // throw new IllegalArgumentException();
-
+    public Window(String username) {
         // Prevents excessively long usernames
-        // if (username.length > 30)
-        // throw new IllegalArgumentException();
+        if (username.length() > 40)
+            throw new IllegalArgumentException();
 
         this.username = username;
-        this.hostAddress = hostAddress;
-        this.port = port;
 
         setTitle(username); // setTitle(username + "@" + hostAddress.toString());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -134,7 +115,7 @@ public class Window extends JFrame {
         scrollingInbox.setPreferredSize(SIZE);
 
         add(scrollingInbox);
-        add(input = new Input((message) -> addMessage(username, message)));
+        add(input = new Input());
 
         pack(); // Resizes to set screen size
         setLocationRelativeTo(null); // Displays window in the center of the screen
@@ -142,17 +123,12 @@ public class Window extends JFrame {
     }
 
     /**
-     * <p>
      * Connects to chat server socket and begins exchanging messages.
-     * </p>
      * 
-     * <p>
-     * A client thread receives and displays incoming messages from other users while outbound
-     * messages from the user are handled by the server thread to be boardcasted.
-     * </p>
+     * @param hostAddress The host address of the server
+     * @param port The port used by the server
      */
-    public void connectToServer() {
-        Scanner scanner = new Scanner(System.in);
+    public void connectToServer(InetAddress hostAddress, int port) {
         try (Socket socket = new Socket(hostAddress, port)) {
             // Output to server
             PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
@@ -161,35 +137,18 @@ public class Window extends JFrame {
             ClientThread clientThread = new ClientThread(socket);
             clientThread.start();
 
-            // Listens for user input
-            String message;
-            while (clientThread.isAlive()) {
-                message = scanner.nextLine();
+            // Listens for user input and posts it to the server
+            input.setButtonCallback(output::println);
 
-                // User leaves server
-                if (message.equals(Server.EXIT_STRING)) {
-                    clientThread.kill();
-
-                } else {
-                    String timestamp = new Date().toString();
-                    message = String.format("%s (%s): %s ", username, timestamp, message);
-                    output.println(message);
-                }
-            }
-
-            // Displays leave message to other users
-            output.println(username + " has left.");
+            // Continuously listens until the thread is dead
+            while (clientThread.isAlive()) {}
 
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-        catch (Exception e) {
+            
+        } catch (Exception e) {
             System.out.println("Exception caught in client.");
             e.printStackTrace();
-
-        } finally {
-            scanner.close();
         }
     }
 
@@ -208,7 +167,28 @@ public class Window extends JFrame {
     }
 
     public static void main(String[] args) {
-        Window window = new Window("Test Long Username that May be Problem", null, 3000);
+        if (args.length != 3) {
+            System.out.println(args.length);
+            System.out.println("Arguments required: <username> <multicast-host> <port-number>");
+            return;
+        }
+
+        // Extracts username, host address, and port number, from args
+        String username = args[0];
+        InetAddress hostAddress;
+        int port;
+
+        try {
+            hostAddress = InetAddress.getByName(args[1]);
+            port = Integer.parseInt(args[2]);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        Window window = new Window(username);
+        window.connectToServer(hostAddress, port);
     }
 
 }
