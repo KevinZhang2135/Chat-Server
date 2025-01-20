@@ -10,7 +10,6 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.Date;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JScrollBar;
@@ -21,7 +20,7 @@ import javax.swing.border.EmptyBorder;
  * The main display of the texting application based on Google Messages. It consists of a scrollable
  * log of previous messages in the group chat with a sticky bottom input to send new messages.
  */
-public class Window extends JFrame {
+public class Client extends JFrame {
     /* Dimension and size constants */
     public static final Dimension SIZE = new Dimension(360, 800);
     public static final Dimension SCREEN_MARGIN = new Dimension(20, 10);
@@ -85,7 +84,7 @@ public class Window extends JFrame {
      * 
      * @param username The specified username of the client
      */
-    public Window(String username) {
+    public Client(String username) {
         // Prevents excessively long usernames
         if (username.length() > 40)
             throw new IllegalArgumentException();
@@ -187,7 +186,7 @@ public class Window extends JFrame {
             return;
         }
 
-        Window window = new Window(username);
+        Client window = new Client(username);
         window.connectToServer(hostAddress, port);
     }
 

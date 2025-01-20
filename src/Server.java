@@ -13,8 +13,6 @@ import java.util.ArrayList;
  */
 public class Server {
     public static final String EXIT_STRING = "exit";
-    // public static final int NUM_THREADS = 10; // TODO
-
     private int port;
     private ArrayList<ServerDispatcher> serverThreads;
 

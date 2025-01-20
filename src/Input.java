@@ -18,11 +18,11 @@ public class Input extends JPanel {
     /* Dimension and size constants */
     // Constant size of send button
     public static final int BUTTON_WIDTH =
-            Window.INPUT_SIZE.height - Window.SCREEN_MARGIN.height * 2;
+            Client.INPUT_SIZE.height - Client.SCREEN_MARGIN.height * 2;
 
     // Maximum size of the box
     public static final Dimension BOX_SIZE = new Dimension(
-            Window.INPUT_SIZE.width - Window.SCREEN_MARGIN.height - BUTTON_WIDTH, BUTTON_WIDTH);
+            Client.INPUT_SIZE.width - Client.SCREEN_MARGIN.height - BUTTON_WIDTH, BUTTON_WIDTH);
 
     /* Colors */
     public static final Color FORM_COLOR = new Color(0x282a2d);
@@ -60,10 +60,10 @@ public class Input extends JPanel {
         textField = new RoundTextField();
 
         textField.setBorderPainted(false);
-        textField.setBorder(new EmptyBorder(Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width,
-                Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width));
+        textField.setBorder(new EmptyBorder(Client.SCREEN_MARGIN.height, Client.SCREEN_MARGIN.width,
+                Client.SCREEN_MARGIN.height, Client.SCREEN_MARGIN.width));
 
-        textField.setFont(Window.SANS_SERIF_16);
+        textField.setFont(Client.SANS_SERIF_16);
         textField.setCaretColor(TEXT_COLOR);
 
         textField.setPreferredSize(BOX_SIZE);
@@ -71,10 +71,10 @@ public class Input extends JPanel {
         textField.setBackground(FORM_COLOR);
 
         // Sets size and inserts padding
-        setBorder(new EmptyBorder(Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width,
-                Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width));
+        setBorder(new EmptyBorder(Client.SCREEN_MARGIN.height, Client.SCREEN_MARGIN.width,
+                Client.SCREEN_MARGIN.height, Client.SCREEN_MARGIN.width));
 
-        setBackground(Window.BACKGROUND_COLOR);
+        setBackground(Client.BACKGROUND_COLOR);
 
         add(textField);
         add(sendButton);

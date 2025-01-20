@@ -17,7 +17,7 @@ public class Inbox extends JPanel {
     public static final Dimension TEXT_BOX_MARGIN = new Dimension(20, 10);
 
     // Maximum width of the text box
-    public static final int TEXT_BOX_WIDTH = Window.SIZE.width - Window.SCREEN_MARGIN.width * 2;
+    public static final int TEXT_BOX_WIDTH = Client.SIZE.width - Client.SCREEN_MARGIN.width * 2;
 
     // Maximum width of the text label
     public static final int TEXT_WIDTH = TEXT_BOX_WIDTH - TEXT_BOX_MARGIN.width * 2;
@@ -63,12 +63,12 @@ public class Inbox extends JPanel {
 
             JLabel text = new JLabel(sender, alignment);
             text.setBorder(new EmptyBorder(0, 0, 0, 0));
-            text.setFont(Window.SANS_SERIF_16);
+            text.setFont(Client.SANS_SERIF_16);
 
             text.setPreferredSize(new Dimension(TEXT_BOX_WIDTH, text.getPreferredSize().height));
             text.setForeground(getSenderColor(sender));
 
-            setBackground(Window.CLEAR); // Transparent background
+            setBackground(Client.CLEAR); // Transparent background
             add(text);
         }
 
@@ -125,7 +125,7 @@ public class Inbox extends JPanel {
             JLabel text = new JLabel(String.format(html, TEXT_WIDTH, message));
 
             text.setForeground(TEXT_COLOR);
-            text.setFont(Window.SANS_SERIF_16);
+            text.setFont(Client.SANS_SERIF_16);
 
             // When the width of the box exceeds the maximum, it expands vertically
             Dimension boxSize = new Dimension(TEXT_BOX_WIDTH,
@@ -135,7 +135,7 @@ public class Inbox extends JPanel {
                     BORDER_RADIUS);
 
             setPreferredSize(boxSize);
-            setBackground(Window.CLEAR); // Transparent background
+            setBackground(Client.CLEAR); // Transparent background
 
             add(text);
         }
@@ -185,10 +185,10 @@ public class Inbox extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         // Sets size and inserts padding
-        setBorder(new EmptyBorder(Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width,
-                Window.SCREEN_MARGIN.height, Window.SCREEN_MARGIN.width));
+        setBorder(new EmptyBorder(Client.SCREEN_MARGIN.height, Client.SCREEN_MARGIN.width,
+                Client.SCREEN_MARGIN.height, Client.SCREEN_MARGIN.width));
 
-        setBackground(Window.BACKGROUND_COLOR);
+        setBackground(Client.BACKGROUND_COLOR);
     }
 
     /**
