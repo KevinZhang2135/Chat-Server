@@ -28,8 +28,6 @@ public class Input extends JPanel {
     public static final Color FORM_COLOR = new Color(0x282a2d);
     public static final Color TEXT_COLOR = new Color(0xe3e2e5);
 
-    private String username;
-
     private RoundTextField textField;
     private Consumer<Message> buttonCallback; // Used to send client requests upon pressing button
 

@@ -35,8 +35,6 @@ public class Client extends JFrame {
     private Inbox inbox;
     private Input input;
 
-    private String username;
-
     private class ClientThread extends Thread {
         private final Socket socket;
         private boolean isRunning;
@@ -88,8 +86,6 @@ public class Client extends JFrame {
         // Prevents excessively long usernames
         if (username.length() > 40)
             throw new IllegalArgumentException();
-
-        this.username = username;
 
         setTitle(username); // setTitle(username + "@" + hostAddress.toString());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
