@@ -140,7 +140,9 @@ public class Client extends JFrame {
             input.setButtonCallback(output::println);
 
             // Continuously listens until the thread is dead
-            while (clientThread.isAlive()) {}
+            while (clientThread.isAlive()) {
+                Thread.sleep(1000); // Prevents the loop from taxing too many resources
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
