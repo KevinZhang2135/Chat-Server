@@ -9,7 +9,7 @@ former.
 ## Instructions
 
 To use the chatroom, 
-[download]{https://github.com/KevinZhang2135/Chat-Server/releases} the latest 
+[download](https://github.com/KevinZhang2135/Chat-Server/releases) the latest 
 version of the application first run server on a specified port and navigate to
 the location of the unzipped folder in the terminal.
 

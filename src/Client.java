@@ -3,10 +3,9 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
@@ -22,7 +21,7 @@ import javax.swing.border.EmptyBorder;
  */
 public class Client extends JFrame {
     /* Dimension and size constants */
-    public static final Dimension SIZE = new Dimension(360, 800);
+    public static final Dimension SIZE = new Dimension(360, 720);
     public static final Dimension SCREEN_MARGIN = new Dimension(20, 10);
     public static final Dimension INPUT_SIZE = new Dimension(SIZE.width, 80);
 
@@ -59,17 +58,18 @@ public class Client extends JFrame {
         @Override
         public void run() {
             // Reads group chat from server
-            try (BufferedReader serverDispatcher =
-                    new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+            try (ObjectInputStream serverDispatcher =
+                    new ObjectInputStream(socket.getInputStream())) {
 
                 while (isRunning) {
-                    String message = serverDispatcher.readLine(); // Displays message from server
+                    // Displays message from server
+                    Message message = (Message) serverDispatcher.readObject();
                     if (message != null)
-                        addMessage(username, message);
+                        addMessage(message);
                 }
 
             } catch (SocketException e) {
-                System.out.println("Exited string entered.");
+                System.out.println("Connection lost.");
 
             } catch (Exception e) {
                 System.out.println("Exception caught in client thread.");
@@ -114,7 +114,7 @@ public class Client extends JFrame {
         scrollingInbox.setPreferredSize(SIZE);
 
         add(scrollingInbox);
-        add(input = new Input());
+        add(input = new Input(username));
 
         pack(); // Resizes to set screen size
         setLocationRelativeTo(null); // Displays window in the center of the screen
@@ -130,14 +130,21 @@ public class Client extends JFrame {
     public void connectToServer(InetAddress hostAddress, int port) {
         try (Socket socket = new Socket(hostAddress, port)) {
             // Output to server
-            PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
+            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 
             // Sets up thread to receive messages from other users
             ClientThread clientThread = new ClientThread(socket);
             clientThread.start();
 
             // Listens for user input and posts it to the server
-            input.setButtonCallback(output::println);
+            input.setButtonCallback((message) -> {
+                try {
+                    output.writeObject(message);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
 
             // Continuously listens until the thread is dead
             while (clientThread.isAlive()) {
@@ -146,7 +153,7 @@ public class Client extends JFrame {
 
         } catch (IOException e) {
             e.printStackTrace();
-            
+
         } catch (Exception e) {
             System.out.println("Exception caught in client.");
             e.printStackTrace();
@@ -157,14 +164,13 @@ public class Client extends JFrame {
      * Creates a new inbox message with the specified sender and message and displays it in the
      * inbox.
      * 
-     * @param username The specified username of the sender
      * @param message The specified message
      */
-    public void addMessage(String username, String message) {
+    public void addMessage(Message message) {
         if (inbox == null)
             return;
 
-        inbox.addMessage(username, message);
+        inbox.addMessage(message);
     }
 
     public static void main(String[] args) {

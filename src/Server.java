@@ -1,6 +1,6 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -12,7 +12,6 @@ import java.util.ArrayList;
  * server dispatcher for each of them to handle messages.
  */
 public class Server {
-    public static final String EXIT_STRING = "exit";
     private int port;
     private ArrayList<ServerDispatcher> serverThreads;
 
@@ -22,7 +21,7 @@ public class Server {
      */
     private class ServerDispatcher extends Thread {
         private Socket socket;
-        private PrintWriter output;
+        private ObjectOutputStream output;
 
         /**
          * Initializes a thread at a specified socket to listen for client messages
@@ -38,25 +37,15 @@ public class Server {
          */
         @Override
         public void run() {
-            // Reads input from client
-            try (BufferedReader input =
-                    new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-                // Gets output from client
-                output = new PrintWriter(socket.getOutputStream(), true);
+            try (ObjectInputStream input = new ObjectInputStream(socket.getInputStream())) {
+                System.out.println(input);
+                // Gets output to client socket
+                output = new ObjectOutputStream(socket.getOutputStream());
 
                 // Continuously listens for client input
                 while (true) {
-                    String outputString = input.readLine();
-
-                    // Removes thread from server pool when the user enters the exit
-                    // string
-                    if (outputString == null) {
-                        serverThreads.remove(this);
-                        break;
-                    }
-
-                    outputString = outputString.strip().toLowerCase();
-                    printToClients(outputString, socket);
+                    Message outputMessage = (Message) input.readObject();
+                    printToClients(outputMessage);
                 }
 
             } catch (SocketException e) {
@@ -67,17 +56,34 @@ public class Server {
             } catch (Exception e) {
                 System.out.println("Exception caught in server thread.");
                 e.printStackTrace();
+
+            } finally {
+                try {
+                    if (output != null)
+                        output.close();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
         }
 
         /**
          * Displays client input to all other clients on the chat server
          * 
-         * @param outputString
+         * @param outputString The string sent to everyone else
          */
-        private void printToClients(String outputString, Socket socket) {
-            for (ServerDispatcher thread : serverThreads)
-                thread.output.println(outputString);
+        private void printToClients(Message outputMessage) {
+            for (ServerDispatcher thread : serverThreads) {
+                try {
+                    thread.output.writeObject(outputMessage);
+
+                } catch (IOException e) {
+                    // POST failed
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

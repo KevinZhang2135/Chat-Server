@@ -28,10 +28,16 @@ public class Input extends JPanel {
     public static final Color FORM_COLOR = new Color(0x282a2d);
     public static final Color TEXT_COLOR = new Color(0xe3e2e5);
 
-    private RoundTextField textField;
-    private Consumer<String> buttonCallback; // Used to send client requests upon pressing button
+    private String username;
 
-    public Input() {
+    private RoundTextField textField;
+    private Consumer<Message> buttonCallback; // Used to send client requests upon pressing button
+
+    /**
+     * Initializes an input text box and button at the bottom of the app to send messages.
+     * @param username The specified username of the user
+     */
+    public Input(String username) {
 
         // Creates button to send messages to other users
         RoundedButton sendButton = new RoundedButton();
@@ -50,9 +56,10 @@ public class Input extends JPanel {
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String output = clear();
-                if (!output.isBlank() && buttonCallback != null)
-                    buttonCallback.accept(output);
+                String message = clear();
+
+                if (!message.isBlank() && buttonCallback != null)
+                    buttonCallback.accept(new Message(username, message));
             }
         });
 
@@ -85,7 +92,7 @@ public class Input extends JPanel {
      * 
      * @param buttonCallback The callback triggered by clicking the send button
      */
-    public void setButtonCallback(Consumer<String> buttonCallback) {
+    public void setButtonCallback(Consumer<Message> buttonCallback) {
         this.buttonCallback = buttonCallback;
     }
 

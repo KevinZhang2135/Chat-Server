@@ -195,15 +195,14 @@ public class Inbox extends JPanel {
      * Creates a new inbox message with the specified sender and message and displays it in the
      * inbox. Throws {@code IllegalArgumentException} either if the sender or message is null.
      * 
-     * @param sender The specified username of the sender
      * @param message The specified message
      */
-    public void addMessage(String sender, String message) {
-        if (sender == null || message == null)
+    public void addMessage(Message message) {
+        if (message == null)
             throw new IllegalArgumentException();
 
-        add(new UserLabel(sender));
-        add(new TextBox(message));
+        add(new UserLabel(message.username));
+        add(new TextBox(message.message));
 
         // Inserts margins between messages
         add(Box.createRigidArea(BOX_MARGIN));
