@@ -69,7 +69,7 @@ public class Client extends JFrame {
             } catch (SocketException e) {
                 System.out.println("Connection lost.");
 
-            } catch (Exception e) {
+            } catch (IOException | ClassNotFoundException e) {
                 System.out.println("Exception caught in client thread.");
                 e.printStackTrace();
             }
@@ -147,12 +147,10 @@ public class Client extends JFrame {
                 Thread.sleep(1000); // Prevents the loop from taxing too many resources
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException e) {
             System.out.println("Exception caught in client.");
             e.printStackTrace();
+
         }
     }
 

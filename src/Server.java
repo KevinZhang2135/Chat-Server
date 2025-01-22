@@ -38,7 +38,6 @@ public class Server {
         @Override
         public void run() {
             try (ObjectInputStream input = new ObjectInputStream(socket.getInputStream())) {
-                System.out.println(input);
                 // Gets output to client socket
                 output = new ObjectOutputStream(socket.getOutputStream());
 
@@ -53,7 +52,7 @@ public class Server {
                 socket = null;
                 serverThreads.remove(this);
 
-            } catch (Exception e) {
+            } catch (IOException | ClassNotFoundException e) {
                 System.out.println("Exception caught in server thread.");
                 e.printStackTrace();
 
@@ -62,7 +61,7 @@ public class Server {
                     if (output != null)
                         output.close();
 
-                } catch (Exception e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
 
@@ -117,7 +116,7 @@ public class Server {
                 System.out.println(serverThreads + "\n");
             }
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("Exception caught in server.");
             e.printStackTrace();
         }

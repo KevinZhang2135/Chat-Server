@@ -48,7 +48,7 @@ public class Input extends JPanel {
             sendButton.setImage(icon);
 
         } catch (IOException e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
 
         sendButton.addActionListener(new ActionListener() {
