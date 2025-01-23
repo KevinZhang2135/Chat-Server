@@ -42,7 +42,7 @@ public class Server {
                 output = new ObjectOutputStream(socket.getOutputStream());
 
                 // Continuously listens for client input
-                while (true) {
+                while (socket.isConnected()) {
                     Message outputMessage = (Message) input.readObject();
                     printToClients(outputMessage);
                 }
@@ -53,7 +53,6 @@ public class Server {
                 serverThreads.remove(this);
 
             } catch (IOException | ClassNotFoundException e) {
-                System.out.println("Exception caught in server thread.");
                 e.printStackTrace();
 
             } finally {
@@ -100,13 +99,15 @@ public class Server {
      * Starts listening for new clients joining the server and faciliates communication between them
      */
     public void run() {
+        Socket socket = null;
+
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             InetAddress localHost = InetAddress.getLocalHost();
             System.out.println("Server running on " + localHost);
 
             // Continuously listens for new socket connections from new users
             while (true) {
-                Socket socket = serverSocket.accept(); // Blocks until new connection is made
+                socket = serverSocket.accept(); // Blocks until new connection is made
                 ServerDispatcher serverThread = new ServerDispatcher(socket);
 
                 serverThreads.add(serverThread);
@@ -117,8 +118,16 @@ public class Server {
             }
 
         } catch (IOException e) {
-            System.out.println("Exception caught in server.");
             e.printStackTrace();
+
+        } finally {
+            try {
+                if (socket != null)
+                    socket.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

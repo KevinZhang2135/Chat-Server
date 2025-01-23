@@ -3,6 +3,8 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -67,10 +69,9 @@ public class Client extends JFrame {
                 }
 
             } catch (SocketException e) {
-                System.out.println("Connection lost.");
+                e.printStackTrace();
 
             } catch (IOException | ClassNotFoundException e) {
-                System.out.println("Exception caught in client thread.");
                 e.printStackTrace();
             }
         }
@@ -88,7 +89,7 @@ public class Client extends JFrame {
             throw new IllegalArgumentException();
 
         setTitle(username); // setTitle(username + "@" + hostAddress.toString());
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Displays items in a single column
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
@@ -132,6 +133,14 @@ public class Client extends JFrame {
             ClientThread clientThread = new ClientThread(socket);
             clientThread.start();
 
+            // Closes client thread on window close
+            addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    clientThread.isRunning = false;
+                }
+            });
+
             // Listens for user input and posts it to the server
             input.setButtonCallback((message) -> {
                 try {
@@ -148,9 +157,7 @@ public class Client extends JFrame {
             }
 
         } catch (IOException | InterruptedException e) {
-            System.out.println("Exception caught in client.");
             e.printStackTrace();
-
         }
     }
 
