@@ -1,5 +1,4 @@
 
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -33,8 +32,13 @@ public class Inbox extends JPanel {
     public class UserLabel extends JPanel {
         // Colors used for the name of message senders
         public static enum SenderColors {
-            PINK(0xf791b8), ORANGE(0xfeb580), SAND(0xd6cb75), LIME(0xc9d87b), TEAL(
-                    0x75c4bb), INDIGO(0x8ea4e2), PERIWINKLE(0xaea1f3);
+            PINK(0xf791b8),
+            ORANGE(0xfeb580),
+            SAND(0xd6cb75),
+            LIME(0xc9d87b),
+            TEAL(0x75c4bb),
+            INDIGO(0x8ea4e2),
+            PERIWINKLE(0xaea1f3);
 
             public final Color color;
 
@@ -44,7 +48,8 @@ public class Inbox extends JPanel {
         };
 
         /**
-         * Initializes a label for the sender of a message. If the sender is the user, it is aligned
+         * Initializes a label for the sender of a message. If the sender is the user,
+         * it is aligned
          * on the right of the screen and the username is replaced with "You". Throws
          * {@code IllegalArgumentException} if the sender is null.
          * 
@@ -73,7 +78,8 @@ public class Inbox extends JPanel {
         }
 
         /**
-         * Returns the preferred size as maximum size for the label to prevent resizing by the box layout.
+         * Returns the preferred size as maximum size for the label to prevent resizing
+         * by the box layout.
          * 
          * @return The preferred size of the label
          *
@@ -84,10 +90,12 @@ public class Inbox extends JPanel {
         }
 
         /**
-         * Returns a color using the hash code of the specified sender to create somewhat random
+         * Returns a color using the hash code of the specified sender to create
+         * somewhat random
          * colors for each user.<br/>
          * 
-         * Because the color of the sender's username is chosen via hashing, it is approximately
+         * Because the color of the sender's username is chosen via hashing, it is
+         * approximately
          * random, and multiple calls using the same sender will return the same color.
          * 
          * @param sender The specified username of the sender
@@ -111,7 +119,8 @@ public class Inbox extends JPanel {
         private RoundRectangle2D box;
 
         /**
-         * Initializes and displays a text box as a rounded rectangle with a message. Throws
+         * Initializes and displays a text box as a rounded rectangle with a message.
+         * Throws
          * {@code IllegalArgumentException} if the message is null.
          * 
          * @param message The message content
@@ -140,9 +149,9 @@ public class Inbox extends JPanel {
             add(text);
         }
 
-
         /**
-         * Returns the preferred size as maximum size for the text box to prevent resizing by the
+         * Returns the preferred size as maximum size for the text box to prevent
+         * resizing by the
          * box layout.
          * 
          * @return The preferred size of the text box
@@ -170,7 +179,8 @@ public class Inbox extends JPanel {
     }
 
     /**
-     * Initializes an inbox containing all the text messages in the group chat. Throws
+     * Initializes an inbox containing all the text messages in the group chat.
+     * Throws
      * {@code IllegalArgumentException} if the username is null.
      * 
      * @param username The name of the user
@@ -192,8 +202,10 @@ public class Inbox extends JPanel {
     }
 
     /**
-     * Creates a new inbox message with the specified sender and message and displays it in the
-     * inbox. Throws {@code IllegalArgumentException} either if the sender or message is null.
+     * Creates a new inbox message with the specified sender and message and
+     * displays it in the
+     * inbox. Throws {@code IllegalArgumentException} either if the sender or
+     * message is null.
      * 
      * @param message The specified message
      */

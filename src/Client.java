@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JScrollBar;
@@ -113,6 +114,10 @@ public class Client extends JFrame {
         add(scrollingInbox);
         add(input = new Input(username));
 
+        // Sets button listeners
+        getRootPane().setDefaultButton(input.getSendButton());
+        input.getSendButton().requestFocus();
+
         pack(); // Resizes to set screen size
         setLocationRelativeTo(null); // Displays window in the center of the screen
         setVisible(true);
@@ -190,7 +195,7 @@ public class Client extends JFrame {
             hostAddress = InetAddress.getByName(args[1]);
             port = Integer.parseInt(args[2]);
 
-        } catch (Exception e) {
+        } catch (NumberFormatException | UnknownHostException e) {
             e.printStackTrace();
             return;
         }

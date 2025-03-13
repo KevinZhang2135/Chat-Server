@@ -1,23 +1,20 @@
 package components;
 
 import java.awt.AWTEvent;
-import java.awt.AWTEventMulticaster;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import javax.swing.JButton;
 
 /*
  * A rounded button for user interaction.
  * 
  */
-public class RoundedButton extends Component {
-    private ActionListener actionListener; // Post action events to listeners
+public class RoundedButton extends JButton {
     private boolean pressed = false; // true if the button is indented.
 
     private String label; // The button's text
@@ -41,23 +38,13 @@ public class RoundedButton extends Component {
     }
 
     /**
-     * Gets the label.
-     *
-     * @see setLabel
-     */
-    public String getLabel() {
-        return label;
-    }
-
-    /**
-     * Sets the label.
+     * Sets the text.
      * 
      * @param label The new label of the button
-     *
-     * @see getLabel
      */
-    public void setLabel(String label) {
-        this.label = label;
+    @Override
+    public void setText(String text) {
+        super.setText(text);
         invalidate();
         repaint();
     }
@@ -108,26 +95,6 @@ public class RoundedButton extends Component {
     }
 
     /**
-     * Adds the specified action listener to receive action events from this button.
-     *
-     * @param listener The action listener
-     */
-    public void addActionListener(ActionListener listener) {
-        actionListener = AWTEventMulticaster.add(actionListener, listener);
-        enableEvents(AWTEvent.MOUSE_EVENT_MASK);
-    }
-
-    /**
-     * Removes the specified action listener so it no longer receives action events from this
-     * button.
-     *
-     * @param listener The action listener
-     */
-    public void removeActionListener(ActionListener listener) {
-        actionListener = AWTEventMulticaster.remove(actionListener, listener);
-    }
-
-    /**
      * Determine if click was inside round button.
      */
     @Override
@@ -166,10 +133,6 @@ public class RoundedButton extends Component {
                     // double buffering (see the Gauge example).
                     repaint();
                 }
-
-            }
-
-            case MouseEvent.MOUSE_ENTERED -> {
             }
 
             case MouseEvent.MOUSE_EXITED -> {

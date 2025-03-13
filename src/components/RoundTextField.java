@@ -12,7 +12,7 @@ import javax.swing.JTextField;
  */
 public class RoundTextField extends JTextField {
     // The radius of the field is defined as the width * radiusMultipler.
-    private static double radiusMultipler = 0.06;
+    private final static double RADIUS_MULTIPLER = 0.06;
     private Shape shape;
     private boolean displayBorder;
 
@@ -34,7 +34,7 @@ public class RoundTextField extends JTextField {
     @Override
     protected void paintComponent(Graphics g) {
         // Radius of the rounded box corners
-        int radius = (int) (getWidth() * radiusMultipler);
+        int radius = (int) (getWidth() * RADIUS_MULTIPLER);
 
         g.setColor(getBackground());
         g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
@@ -48,7 +48,7 @@ public class RoundTextField extends JTextField {
         if (!displayBorder)
             return;
 
-        int radius = (int) (getWidth() * radiusMultipler);
+        int radius = (int) (getWidth() * RADIUS_MULTIPLER);
 
         g.setColor(getForeground());
         g.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
@@ -57,7 +57,7 @@ public class RoundTextField extends JTextField {
     @Override
     public boolean contains(int x, int y) {
         if (shape == null || !shape.getBounds().equals(getBounds())) {
-            int radius = (int) (getWidth() * radiusMultipler);
+            int radius = (int) (getWidth() * RADIUS_MULTIPLER);
             shape = new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, radius,
                     radius);
         }

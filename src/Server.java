@@ -12,8 +12,8 @@ import java.util.ArrayList;
  * server dispatcher for each of them to handle messages.
  */
 public class Server {
-    private int port;
-    private ArrayList<ServerDispatcher> serverThreads;
+    private final int port;
+    private final ArrayList<ServerDispatcher> serverThreads;
 
     /**
      * The dispatcher handles new messages from clients and forwards them to all clients connected
